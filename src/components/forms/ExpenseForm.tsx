@@ -33,8 +33,6 @@ type FormData = {
   date: string;
 };
 
-const categoryOptions = ExpenseCategoryOptions;
-
 const ExpenseForm: React.FC<ExpenseFormProps> = ({
   modalVisible,
   setModalVisible,
@@ -154,7 +152,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
             value={formData.category}
             onValueChange={(value) => handleChange("category", value)}
             pickerItemLabel="Select category"
-            pickerOption={categoryOptions}
+            pickerOption={ExpenseCategoryOptions}
           />
 
           <DateField 

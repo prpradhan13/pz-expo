@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Text,
   TextInput,
   TouchableOpacity,
@@ -23,6 +24,8 @@ import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 import DeleteAlert from "@/src/components/modals/DeleteAlert";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { useAuth } from "@clerk/clerk-expo";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import UpdateTodo from "@/src/components/forms/UpdateTodo";
 
 const todoScreen = () => {
   const [filter, setFilter] = useState("all");
@@ -32,6 +35,12 @@ const todoScreen = () => {
   const [taskInputData, setTaskInputData] = useState<string>("");
   const [selectedTaskToDelete, setSelectedTaskToDelete] = useState<string>("");
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [updateModalVisible, setUpdateModalVisible] = useState<boolean>(false);
+  const [updateTodo, setUpdateTodo] = useState({
+    todoId: "",
+    title: "",
+    dueDate: "",
+  });
 
   const queryClient = useQueryClient();
   const { getToken, userId } = useAuth();
@@ -99,10 +108,6 @@ const todoScreen = () => {
     ];
 
     updateTodoMutation.mutate({ todoId: selectedTodoToAddTask, newTask });
-
-    // Reset task input after saving
-    setTaskInputData("");
-    setSelectedTodoToAddTask(null);
   };
 
   // Mutation for adding a new task to a todo
@@ -114,6 +119,8 @@ const todoScreen = () => {
         type: "success",
         text1: "Task added successfully! Best of luck 👍",
       });
+      setTaskInputData("");
+      setSelectedTodoToAddTask(null);
     },
     onError: () => {
       Toast.show({
@@ -122,6 +129,8 @@ const todoScreen = () => {
       });
     },
   });
+
+  const taskAddLoading = updateTodoMutation.isPending;
 
   const closeTodoInput = () => {
     setTaskInputData("");
@@ -168,8 +177,29 @@ const todoScreen = () => {
     updateTaskMutation.mutate({ isChecked, todoId, taskId, taskTitle });
   };
 
+  const handleClickOnUpdateTodo = (todoId: string, title: string, dueDate: string) => {
+    setUpdateModalVisible(true);
+    setUpdateTodo({...updateTodo, todoId, title, dueDate})
+  }
+
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["16%", "30%"], []);
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-mainBgColor">
+        <ActivityIndicator color="#FF8A65" size={"large"} />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View>
+        <Text>Error: {error.message}</Text>
+      </View>
+    );
+  }
 
   return (
     <GestureHandlerRootView>
@@ -180,8 +210,8 @@ const todoScreen = () => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 150 }}
           renderItem={({ item }) => {
-            const createdAt = dayjs(item?.createdAt).format("DD MMMM YYYY");
-            const dueDate = dayjs(item?.dueDate).format("DD MMMM YYYY");
+            const createdAt = dayjs(item?.createdAt).format("DD/MM/YY");
+            const dueDate = dayjs(item?.dueDate).format("DD/MM/YY");
             const remainingDays = dayjs(item?.dueDate).diff(today, "day");
 
             return (
@@ -203,21 +233,30 @@ const todoScreen = () => {
                 </View>
 
                 <View className="flex flex-row justify-between items-center mb-2">
-                  <Text
-                    className={`${
-                      item.progressPercentage === 100
-                        ? "bg-[rgb(0_128_0)]"
-                        : item.progressPercentage >= 75
-                        ? "bg-[#22c55e]"
-                        : item.progressPercentage >= 50
-                        ? "bg-[#fde047]"
-                        : "bg-[#f97316]"
-                    } py-1 px-2 rounded-md text-mainBgColor font-semibold text-sm`}
-                  >
-                    {`${
-                      item.tasks.filter((task: any) => task.completed).length
-                    }/${item.tasks.length}`}
-                  </Text>
+                  <View className="flex flex-row gap-3">
+                    <Text
+                      className={`${
+                        item.progressPercentage === 100
+                          ? "bg-[rgb(0_128_0)]"
+                          : item.progressPercentage >= 75
+                          ? "bg-[#22c55e]"
+                          : item.progressPercentage >= 50
+                          ? "bg-[#fde047]"
+                          : "bg-[#f97316]"
+                      } py-1 px-2 rounded-md text-mainBgColor font-semibold text-sm`}
+                    >
+                      {`${
+                        item.tasks.filter((task: any) => task.completed).length
+                      }/${item.tasks.length}`}
+                    </Text>
+                    
+                    <TouchableOpacity
+                      onPress={() => handleClickOnUpdateTodo(item?._id, item?.title,item?.dueDate)}
+                      className="bg-mainBgColor py-1 px-2 rounded-lg"
+                    >
+                      <FontAwesome name="pencil" size={20} color="#3b82f6" />
+                    </TouchableOpacity>
+                  </View>
                   <Text
                     className={`font-medium text-sm ${
                       remainingDays <= 3
@@ -239,25 +278,25 @@ const todoScreen = () => {
                   </Text>
                 </View>
 
-                {item.dueDate === today || createdAt ? (
+                {item.dueDate === today ? (
                   <View className="">
-                    <Text className="text-xl font-bold text-borderColor capitalize">
-                      {`${item.title === "" ? "Today's Tasks" : item.title}`}
+                    <Text className="text-lg font-bold text-borderColor capitalize">
+                      {`${item.title === "" ? "Today" : item.title}`}
                     </Text>
-                    <Text className="text-secondaryText font-medium text-sm">
-                      Due Date: {dueDate}
+                    <Text className="text-secondaryText font-medium text-base">
+                      Complete task by {dueDate}
                     </Text>
                   </View>
                 ) : (
-                  <View className="my-4">
-                    <Text className="text-base font-bold text-borderColor capitalize">
+                  <View className="">
+                    <Text className="text-lg font-bold text-borderColor capitalize">
                       {`${item.title === "" ? "No title" : item.title}`}
                     </Text>
-                    <Text className="text-secondaryText font-medium text-sm">
+                    <Text className="text-secondaryText font-medium text-base">
                       Created: {createdAt}
                     </Text>
-                    <Text className="text-secondaryText font-medium text-sm">
-                      Due Date: {dueDate}
+                    <Text className="text-secondaryText font-medium text-base">
+                      Complete task by {dueDate}
                     </Text>
                   </View>
                 )}
@@ -290,7 +329,11 @@ const todoScreen = () => {
                             onPress={saveAddedTask}
                             className="bg-cardBackground p-2 rounded-md"
                           >
-                            <AntDesign name="check" size={16} color="#22c55e" />
+                            {taskAddLoading ? (
+                              <ActivityIndicator size={16} color="#FF6E40" />
+                            ) : (
+                              <AntDesign name="check" size={16} color="#22c55e" />
+                            )}
                           </TouchableOpacity>
                           <TouchableOpacity
                             onPress={closeTodoInput}
@@ -405,6 +448,15 @@ const todoScreen = () => {
           </BottomSheetView>
         </BottomSheet>
       </View>
+
+      {updateModalVisible && (
+        <UpdateTodo
+          updateModalVisible={updateModalVisible}
+          setUpdateModalVisible={setUpdateModalVisible}
+          dataToUpdate={updateTodo}
+        />
+      )} 
+
     </GestureHandlerRootView>
   );
 };

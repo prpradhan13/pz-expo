@@ -61,6 +61,28 @@ export const updateTodoData = async ({todoId, tasks, getToken}: UpdateTodoDataPr
     }
 };
 
+export const updateTodoDetails = async ({todoId, userFillTitle, userDueDate, getToken}: any) => {
+    try {
+        const token = await getToken();
+
+        const res = await api.put(
+            `/api/v1/todo/${todoId}`, 
+            {
+                title: userFillTitle, 
+                dueDate: userDueDate
+            },
+            {headers: {
+                Authorization: `Bearer ${token}`
+            }}
+        );
+
+        return res.status === 200 ? res.data : []
+    } catch (error) {
+        console.log(error);
+        return [];
+    }
+}
+
 export const updateTaskChange = async ({isChecked, taskId, todoId, taskTitle, getToken}: UpdateTaskChangeProps) => {
     const payload = {  completed: isChecked, taskId, taskTitle};
     // console.log(payload);

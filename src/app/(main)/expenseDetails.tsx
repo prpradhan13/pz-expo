@@ -50,7 +50,7 @@ const expenseDetails = () => {
 
   const { getToken, userId } = useAuth();
 
-  const { data, isLoading } = useQuery<ExpenseDataResponse>({
+  const { data, isLoading, isError, error} = useQuery<ExpenseDataResponse>({
     queryKey: [`expense_${userId}`],
   });
 
@@ -101,6 +101,22 @@ const expenseDetails = () => {
 
   const snapPoints = useMemo(() => ["10%", "25%"], []);
   const bottomSheetRef = useRef<BottomSheet>(null);
+
+  if (isLoading){
+    return (
+      <View className="flex-1 justify-center items-center bg-mainBgColor">
+        <ActivityIndicator size="large" color="#FF6E40" />
+      </View>
+    )
+  }
+
+  if (isError) {
+    return (
+      <View>
+        <Text>Error: {error.message}</Text>
+      </View>
+    );
+  }
 
   return (
     <GestureHandlerRootView>

@@ -1,4 +1,4 @@
-import { FlatList, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import React, { useMemo } from "react";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import Animated, { BounceInDown } from "react-native-reanimated";
@@ -49,6 +49,20 @@ const trainingDetails = () => {
   const trainData = matchesTrainingData || {};
 
   const exercisePlan = trainData?.trainingPlan || [];
+
+  if (isLoading) {
+    <View className="flex-1 justify-center items-center bg-mainBgColor">
+      <ActivityIndicator size="large" color="#FF6E40" />
+    </View>
+  }
+
+  if (isError) {
+    return (
+      <View>
+        <Text>Error: {error.message}</Text>
+      </View>
+    );
+  }
 
   return (
     <View className="h-screen w-full bg-mainBgColor p-5">

@@ -1,5 +1,5 @@
-import { SplashScreen, Stack, Link, router } from 'expo-router'
-import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { SplashScreen, Stack, router } from 'expo-router'
+import { Text, TouchableOpacity, View } from 'react-native';
 import { useEffect, useMemo, useState } from 'react';
 import { useFonts } from 'expo-font';
 import { Pacifico_400Regular } from '@expo-google-fonts/pacifico';

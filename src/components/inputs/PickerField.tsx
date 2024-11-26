@@ -17,6 +17,9 @@ const PickerField: React.FC<PickerFieldProps> = ({
   pickerItemLabel="",
   pickerOption
 }) => {
+  // Filter out the "all" option from the picker options
+  const filteredOptions = pickerOption.filter((option) => option !== "all");
+
   return (
     <View className="flex gap-2">
       <Text className="text-secondaryText tracking-wider">{label}</Text>
@@ -34,7 +37,7 @@ const PickerField: React.FC<PickerFieldProps> = ({
             color="grey"
             style={{ fontSize: 14 }}
           />
-          {pickerOption.map((category, index) => (
+          {filteredOptions.map((category, index) => (
             <Picker.Item
               key={index}
               label={category}

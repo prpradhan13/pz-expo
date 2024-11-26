@@ -22,7 +22,7 @@ const TextField: React.FC<TextFieldProps> = ({
 }) => {
   return (
     <View className="flex gap-2">
-      <Text className={`text-secondaryText tracking-wider ${!label && "hidden"}`}>{label}</Text>
+      <Text className={`text-secondaryText tracking-wider font-medium ${!label && "hidden"}`}>{label}</Text>
       <TextInput
         // autoCapitalize="none"
         className="bg-cardBackground tracking-widest rounded-lg px-3 py-2 text-primaryTextColor"
