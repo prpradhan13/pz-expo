@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Text,
   TouchableOpacity,
@@ -15,11 +16,19 @@ import DeleteAlert from "@/src/components/modals/DeleteAlert";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useAuth, useUser } from "@clerk/clerk-expo";
+import Dropdown from "@/src/components/Dropdown";
+import ChangesAlert from "@/src/components/modals/ChangesAlert";
 
 const training = () => {
   const [selectedTrainingToDelete, setSelectedTrainingToDelete] =
     useState<string>("");
+  const [trainingToMakePublicUpdate, setTrainingToMakePublicUpdate] =
+    useState<string>("");
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [updatePublicModalVisible, setUpdatePublicModalVisible] =
+    useState<boolean>(false);
+  const [visibleCardId, setVisibleCardId] = useState<string | null>(null);
+
   const navigation = useNavigation();
 
   const { getToken, userId } = useAuth();
@@ -44,8 +53,30 @@ const training = () => {
     navigation.navigate("trainingDetails", { selectedData: trainId });
   };
 
+  // Function to open modal for a specific card
+  const openModal = (id: string) => setVisibleCardId(id);
+
+  // Function to close modal
+  const closeModal = () => setVisibleCardId(null);
+
   const snapPoints = useMemo(() => ["10%", "25%"], []);
   const bottomSheetRef = useRef<BottomSheet>(null);
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-mainBgColor">
+        <ActivityIndicator color="#FF8A65" size={"large"} />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View>
+        <Text>Error: {error.message}</Text>
+      </View>
+    );
+  }
 
   return (
     <GestureHandlerRootView>
@@ -54,7 +85,10 @@ const training = () => {
           onPress={() => router.navigate("/(main)/publicTrainingDetails")}
           className="bg-secondaryText rounded-xl p-2 mb-5"
         >
-          <Text className="text-center font-medium tracking-wide"> Explore Our Plans </Text>
+          <Text className="text-center font-medium tracking-wide">
+            {" "}
+            Explore Our Plans{" "}
+          </Text>
         </TouchableOpacity>
         {userIsAdmin ? (
           <FlatList
@@ -76,14 +110,17 @@ const training = () => {
                     >
                       {item?.isPublic ? "Public" : "Not Public"}
                     </Text>
-                    <TouchableOpacity
-                      onPress={() => {
+                    <Dropdown
+                      onDelete={() => {
                         setSelectedTrainingToDelete(item?._id);
                         setModalVisible(true);
                       }}
-                    >
-                      <MaterialIcons name="delete" size={24} color="#ef4444" />
-                    </TouchableOpacity>
+                      onTogglePublic={() => {
+                        setTrainingToMakePublicUpdate(item?._id);
+                        openModal(item?._id);
+                      }}
+                      isPublic={item?.isPublic}
+                    />
                   </View>
                   <Text className="text-lg font-bold text-borderColor capitalize">
                     {item?.trainingName}
@@ -95,14 +132,25 @@ const training = () => {
                     created at: {dayjs(item?.createdAt).format("DD MMMM YYYY")}
                   </Text>
 
-                  <DeleteAlert
-                    setModalVisible={setModalVisible}
-                    modalVisible={modalVisible}
-                    mutationFunction={() =>
-                      deleteTrainingData(selectedTrainingToDelete, getToken)
-                    }
-                    queryKey={`training_${userId}`}
-                  />
+                  {modalVisible && (
+                    <DeleteAlert
+                      setModalVisible={setModalVisible}
+                      modalVisible={modalVisible}
+                      mutationFunction={() =>
+                        deleteTrainingData(selectedTrainingToDelete, getToken)
+                      }
+                      queryKey={`training_${userId}`}
+                    />
+                  )}
+
+                  {visibleCardId === item?._id && (
+                    <ChangesAlert
+                      updatePublicModalVisible={visibleCardId === item._id}
+                      setUpdatePublicModalVisible={closeModal}
+                      trainingToMakePublicUpdate={trainingToMakePublicUpdate}
+                      isPublic={item?.isPublic}
+                    />
+                  )}
                 </TouchableOpacity>
               </View>
             )}
@@ -132,7 +180,8 @@ const training = () => {
                         {item?.category} Workout
                       </Text>
                       <Text className="capitalize text-secondaryText">
-                        created at: {dayjs(item?.createdAt).format("DD MMMM YYYY")}
+                        created at:{" "}
+                        {dayjs(item?.createdAt).format("DD MMMM YYYY")}
                       </Text>
                     </View>
 
@@ -144,7 +193,6 @@ const training = () => {
                       <MaterialIcons name="delete" size={24} color="#ef4444" />
                     </TouchableOpacity>
                   </View>
-
 
                   <DeleteAlert
                     setModalVisible={setModalVisible}

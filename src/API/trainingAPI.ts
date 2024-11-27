@@ -76,3 +76,24 @@ export const getPublicTrainingData = async (
     return { trainingData: [], total: 0 };
   }
 };
+
+export const togglePublic = async ({getToken, trainingId, isPublic}: any) => {
+  try {
+    const token = await getToken();
+
+    const res = await api.patch(
+      `/api/v1/training/${trainingId}`,
+      {isPublic},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+    
+    return res.status === 200 ? res.data : [];
+  } catch (error) {
+    console.error("Error toggling public:", error);
+    return null;
+  }
+}
