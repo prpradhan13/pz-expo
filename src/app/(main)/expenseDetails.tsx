@@ -18,7 +18,10 @@ import DeleteAlert from "@/src/components/modals/DeleteAlert";
 import TickerComp from "@/src/components/TickerComp";
 import { useAuth } from "@clerk/clerk-expo";
 import { useQuery } from "@tanstack/react-query";
-import {ExpenseCategoryOptions} from "@/src/utils/AdditionalData"
+import {ExpenseCategoryOptions} from "@/src/utils/AdditionalData";
+import DropdownEdit from "@/src/components/DropdownEdit";
+import UpdateExpense from "@/src/components/forms/UpdateExpense";
+
 
 // Define the type of route parameters for the expenseDetails screen
 type RootStackParamList = {
@@ -41,7 +44,9 @@ interface ExpenseDataResponse {
 
 const expenseDetails = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
   const [expenseToDelete, setExpenseToDelete] = useState<any>(null);
+  const [expenseToEdit, setExpenseToEdit] = useState<any>(null);
   const [filter, setFilter] = useState<string>("all");
   const [filterLoadings, setFilterLoadings] = useState<boolean>(false);
 
@@ -180,28 +185,16 @@ const expenseDetails = () => {
                         </View>
                       </View>
 
-                      <View className="flex flex-row gap-3">
-                        <TouchableOpacity>
-                          <FontAwesome
-                            name="pencil-square-o"
-                            size={24}
-                            color="#3b82f6"
-                          />
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                          onPress={() => {
-                            setExpenseToDelete(item?._id);
-                            setModalVisible(true);
-                          }}
-                        >
-                          <MaterialIcons
-                            name="delete"
-                            size={24}
-                            color="#ef4444"
-                          />
-                        </TouchableOpacity>
-                      </View>
+                      <DropdownEdit
+                        onEdit={() => {
+                          setExpenseToEdit(item?._id)
+                          setEditModalVisible(true)
+                        }}
+                        onDelete={() => {
+                          setExpenseToDelete(item?._id);
+                          setModalVisible(true);
+                        }}
+                      />
                     </View>
 
                     <Text className="capitalize font-semibold text-lg text-secondaryText">
@@ -224,6 +217,14 @@ const expenseDetails = () => {
                         deleteExpenseData(expenseToDelete, getToken)
                       }
                     />
+
+                    {expenseToEdit === item?._id && (
+                      <UpdateExpense
+                        editModalVisible={editModalVisible}
+                        setEditModalVisible={setEditModalVisible}
+                        dataForUpdate={item}
+                      />
+                    )}
                   </View>
                 )}
                 ListEmptyComponent={

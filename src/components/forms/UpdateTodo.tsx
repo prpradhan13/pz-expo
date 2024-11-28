@@ -7,7 +7,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateTodoDetails } from "@/src/API/todoAPI";
 import { useAuth } from "@clerk/clerk-expo";
 import Toast from "react-native-toast-message";
-import dayjs from "dayjs";
 
 const UpdateTodo = ({
   updateModalVisible,
@@ -20,8 +19,6 @@ const UpdateTodo = ({
     const todoId = dataToUpdate.todoId;
     const queryClient = useQueryClient();
     const { getToken, userId } = useAuth();
-
-    const todayDate = dayjs();
     
     const handleDateChange = (event: any, selectedDate?: Date) => {
         if (selectedDate) {
@@ -50,14 +47,14 @@ const UpdateTodo = ({
     })
 
     const handleUpdateTodo = () => {
-        if(dataToUpdate.title === userFillTitle){
-            Toast.show({
-                type: "error",
-                text1: "You must have to change the title.",
-            });
+        // if(dataToUpdate.title === userFillTitle){
+        //     Toast.show({
+        //         type: "error",
+        //         text1: "You must have to change the title.",
+        //     });
 
-            return null;
-        }
+        //     return null;
+        // }
 
         updateTodoMutation.mutate();
     }

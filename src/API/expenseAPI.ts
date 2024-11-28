@@ -43,6 +43,28 @@ export const getExpenseData = async (getToken: GetToken) => {
   }
 };
 
+export const updateExpense = async ({ getToken, expenseId, currentData }: any) => {
+  try {
+    const token = await getToken();
+    // console.log("updateExpense" ,getToken, expenseId, currentData);
+
+    const res = await api.put(
+      `/api/v1/expense/${expenseId}`,
+      currentData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+
+    return res.status === 200 ? res.data : [];
+  } catch (error) {
+    console.log("expense Error:", error);
+    return [];
+  }
+}
+
 export const deleteExpenseData = async (
   expenseId: string,
   getToken: GetToken,
