@@ -25,8 +25,6 @@ const training = () => {
   const [trainingToMakePublicUpdate, setTrainingToMakePublicUpdate] =
     useState<string>("");
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [updatePublicModalVisible, setUpdatePublicModalVisible] =
-    useState<boolean>(false);
   const [visibleCardId, setVisibleCardId] = useState<string | null>(null);
 
   const navigation = useNavigation();

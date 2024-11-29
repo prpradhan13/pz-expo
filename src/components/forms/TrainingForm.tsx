@@ -14,7 +14,6 @@ import { IsPublicOptions, TrainingCategoryOptions } from "@/src/utils/Additional
 import Toast from "react-native-toast-message";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createTraining } from "@/src/API/trainingAPI";
-import { Picker } from "@react-native-picker/picker";
 import Animated, { FadeInLeft, FadeInRight, FadeInUp, FadeOutDown, FadeOutRight } from "react-native-reanimated";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import TextField from "../inputs/TextField";
@@ -99,7 +98,7 @@ const TrainingForm = ({
     if (currentExercise.exerciseName === "") {
       return Toast.show({
         type: "error",
-        text1: "Please add a task",
+        text1: "Please add a exercise",
       });
     }
 
@@ -140,6 +139,7 @@ const TrainingForm = ({
         trainingName: "",
         category: "",
         trainingPlan: [],
+        isPublic: "",
       });
       setTrainingModalVisible(false);
     },

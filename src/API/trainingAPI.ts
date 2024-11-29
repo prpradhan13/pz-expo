@@ -97,3 +97,26 @@ export const togglePublic = async ({getToken, trainingId, isPublic}: any) => {
     return null;
   }
 }
+
+export const addNewDataOnExistingTraining = async ({ getToken, trainingId, trainingPlan }: any) => {
+  try {
+    const token = await getToken();
+    console.log(getToken, trainingId, trainingPlan);
+    
+    const res = await api.put(
+      `/api/v1/training/${trainingId}`,
+      {trainingPlan},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    return res.status === 200 ? res.data : [];
+
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}

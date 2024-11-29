@@ -1,9 +1,11 @@
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
-import React, { useMemo } from "react";
+import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
+import React, { useMemo, useState } from "react";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import Animated, { BounceInDown } from "react-native-reanimated";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@clerk/clerk-expo";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import AddNewExercise from "@/src/components/forms/AddNewExercise";
 
 type RootStackParamList = {
   trainingDetails: { selectedData: string };
@@ -31,6 +33,8 @@ interface TrainingQueryResponse {
 }
 
 const trainingDetails = () => {
+  const [addNewExerciseForm, setAddNewExerciseForm] = useState<string | null>(null)
+
   const route = useRoute<ExpenseDetailsRouteProp>();
   const { selectedData } = route.params;
 
@@ -72,11 +76,21 @@ const trainingDetails = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 80 }}
         ListHeaderComponent={
-          <Text className="text-primaryTextColor font-bold text-center text-xl pb-3 border-b-2 border-borderColor capitalize mb-3">
-            {trainData?.trainingName || trainData?.name
-              ? trainData?.trainingName || trainData?.name
-              : "Training Plan"}
-          </Text>
+          <View className=" mb-5 flex flex-row justify-between items-center">
+            <Text className="text-primaryTextColor font-bold text-2xl capitalize">
+              {trainData?.trainingName || trainData?.name
+                ? trainData?.trainingName || trainData?.name
+                : "Training Plan"}
+            </Text>
+            
+            <TouchableOpacity
+              onPress={() => {
+                setAddNewExerciseForm(trainData?._id)
+              }}
+            >
+              <FontAwesome name="pencil-square-o" size={24} color="#3b82f6" />
+            </TouchableOpacity>
+          </View>
         }
         renderItem={({ item, index }) => (
           <Animated.View
@@ -115,6 +129,14 @@ const trainingDetails = () => {
           </Text>
         }
       />
+
+      {addNewExerciseForm === trainData?._id && (
+        <AddNewExercise 
+          addExerciseVisible={addNewExerciseForm === trainData?._id}
+          setAddExerciseVisible={setAddNewExerciseForm}
+          trainingId={trainData?._id}
+        />
+      )}
     </View>
   );
 };
