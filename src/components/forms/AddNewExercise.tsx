@@ -14,7 +14,7 @@ import { useAuth } from "@clerk/clerk-expo";
 import Toast from "react-native-toast-message";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addNewDataOnExistingTraining } from "@/src/API/trainingAPI";
-import Animated, { FadeInUp, FadeOutDown } from "react-native-reanimated";
+import Animated, { FadeInUp } from "react-native-reanimated";
 import ExerciseSetManager from "../inputs/ExerciseSetManager";
 import ExerciseList from "../ExerciseList";
 import ExerciseActionButton from "../ExerciseActionButton";
@@ -61,10 +61,6 @@ const AddNewExercise = ({
   };
 
   const handleExerciseChange = (field: keyof TrainingPlanProps, value: any) => {
-    // setCurrentExercise({
-    //   ...currentExercise,
-    //   [field]: field === "restTime" ? parseInt(value, 10) : value,
-    // });
     setCurrentExercise((prev) => ({ ...prev, [field]: value }));
   };
 

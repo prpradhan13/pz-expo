@@ -81,10 +81,10 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     // Create a new array without the expense at the specified index
     const updatedExpenses = expenseList.filter((_, i) => i !== index);
     setExpenseList(updatedExpenses);
-    Toast.show({
-      type: "success",
-      text1: "Expense removed successfully.",
-    });
+    // Toast.show({
+    //   type: "success",
+    //   text1: "Expense removed successfully.",
+    // });
   };
 
   const createMutation = useMutation({

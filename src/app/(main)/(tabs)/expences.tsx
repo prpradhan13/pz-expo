@@ -5,10 +5,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import AntDesign from "@expo/vector-icons/AntDesign";
 
 import { getExpenseData } from "@/src/API/expenseAPI";
 import Currency from "@/src/utils/Currency";
@@ -55,6 +54,22 @@ const expences = () => {
       setLoadingMonth(null);
     }, 100); // Optional delay for smoother UX
   };
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-mainBgColor">
+        <ActivityIndicator color="#FF8A65" size={"large"} />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View>
+        <Text>Error: {error.message}</Text>
+      </View>
+    );
+  }
 
   return (
     <GestureHandlerRootView>

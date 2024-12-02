@@ -133,7 +133,7 @@ const weeklyPlanDetails = () => {
                   }`}
                   disabled={currentWeekIndex === weekly.length - 1}
             >
-                <Text className="text-black font-semibold text-xs">Previous Week</Text>
+                <Text className="text-black font-semibold text-xs">Next Week</Text>
                 <AntDesign name="right" size={16} color="black" />
             </TouchableOpacity>
         </View>

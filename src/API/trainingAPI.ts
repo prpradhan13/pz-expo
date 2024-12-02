@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CreateTrainingProps, GetToken } from "./interface";
+import { AddNewDataOnExistingTrainingProps, CreateTrainingProps, GetToken, TogglePublicProps } from "./interface";
 
 const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL,
@@ -77,7 +77,7 @@ export const getPublicTrainingData = async (
   }
 };
 
-export const togglePublic = async ({getToken, trainingId, isPublic}: any) => {
+export const togglePublic = async ({getToken, trainingId, isPublic}: TogglePublicProps) => {
   try {
     const token = await getToken();
 
@@ -98,10 +98,9 @@ export const togglePublic = async ({getToken, trainingId, isPublic}: any) => {
   }
 }
 
-export const addNewDataOnExistingTraining = async ({ getToken, trainingId, trainingPlan }: any) => {
+export const addNewDataOnExistingTraining = async ({ getToken, trainingId, trainingPlan }: AddNewDataOnExistingTrainingProps) => {
   try {
     const token = await getToken();
-    console.log(getToken, trainingId, trainingPlan);
     
     const res = await api.put(
       `/api/v1/training/${trainingId}`,

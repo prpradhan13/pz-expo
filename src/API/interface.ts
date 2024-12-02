@@ -85,3 +85,21 @@ export interface CreateTrainingProps {
       }[];
     getToken: () => Promise<any>;
 }
+
+export interface TogglePublicProps {
+  getToken: () => Promise<any>;
+  trainingId: string;
+  isPublic: boolean;
+}
+
+type CurrentExercise ={
+  exerciseName: string;
+  sets: SetsProps[];
+  restTime: number;
+}
+
+export interface AddNewDataOnExistingTrainingProps {
+  getToken: () => Promise<any>;
+  trainingId: string;
+  trainingPlan: CurrentExercise[];
+}

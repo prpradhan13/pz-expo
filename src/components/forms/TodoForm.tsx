@@ -154,7 +154,7 @@ const TodoForm = ({ todoModalVisible, setTodoModalVisible }: TodoFormProps) => {
           />
 
           <DateField 
-            label="How much time it taken?"
+            label="Expected complition date?"
             value={todoFormData.dueDate}
             onChange={(event, selectedDate) => handleDateChange(event, selectedDate)}
           />

@@ -3,7 +3,7 @@ import React, { useMemo, useState } from "react";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import Animated, { BounceInDown } from "react-native-reanimated";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@clerk/clerk-expo";
+import { useAuth, useUser } from "@clerk/clerk-expo";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AddNewExercise from "@/src/components/forms/AddNewExercise";
 
@@ -39,6 +39,8 @@ const trainingDetails = () => {
   const { selectedData } = route.params;
 
   const { userId } = useAuth();
+  const { user } = useUser();
+  const userIsAdmin = user?.publicMetadata.role === "admin";
 
   const { data, isLoading, isError, error } = useQuery<TrainingQueryResponse>({
     queryKey: [`training_${userId}`],
@@ -82,14 +84,15 @@ const trainingDetails = () => {
                 ? trainData?.trainingName || trainData?.name
                 : "Training Plan"}
             </Text>
-            
-            <TouchableOpacity
-              onPress={() => {
-                setAddNewExerciseForm(trainData?._id)
-              }}
-            >
-              <FontAwesome name="pencil-square-o" size={24} color="#3b82f6" />
-            </TouchableOpacity>
+            {userIsAdmin && (
+              <TouchableOpacity
+                onPress={() => {
+                  setAddNewExerciseForm(trainData?._id)
+                }}
+              >
+                <FontAwesome name="pencil-square-o" size={24} color="#3b82f6" />
+              </TouchableOpacity>
+            )}
           </View>
         }
         renderItem={({ item, index }) => (
