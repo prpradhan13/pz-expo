@@ -109,7 +109,7 @@ const UpdateExpense = ({
             />
 
             <DateField
-              label="Due Date"
+              label="Spent date"
               value={currentData.date}
               onChange={(event, selectedDate) =>
                 handleDateChange(event, selectedDate)

@@ -147,7 +147,11 @@ export const Layout = () => {
         <Stack.Screen
           name="publicTrainingDetails"
           options={{
-            headerShown: false,
+            headerTitle: "Our Plans",
+            headerTitleStyle: { color: "#F3ECEC" },
+            headerTintColor: "#F3ECEC",
+            headerBackVisible: true,
+            animation: "ios",
           }}
         />
         <Stack.Screen

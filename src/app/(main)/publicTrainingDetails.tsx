@@ -40,7 +40,7 @@ const publicTrainingDetails = () => {
   };
 
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["5%", "50%"], []);
+  const snapPoints = useMemo(() => ["15%", "50%"], []);
 
   if (isLoading) {
     return (
@@ -61,7 +61,7 @@ const publicTrainingDetails = () => {
   return (
     <GestureHandlerRootView>
       <SafeAreaView className="bg-mainBgColor">
-        <View className="w-full h-screen px-6 pt-8">
+        <View className="w-full h-screen px-6">
           <FlatList
             data={filterPublicTrainingData}
             keyExtractor={(allData) => allData._id}
